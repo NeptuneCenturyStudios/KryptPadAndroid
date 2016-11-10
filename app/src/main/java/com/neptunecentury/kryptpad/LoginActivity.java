@@ -33,6 +33,9 @@ import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
+import com.neptunecentury.kryptpadapi.AsyncTaskComplete;
+import com.neptunecentury.kryptpadapi.KryptPadApi;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -184,8 +187,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            //mAuthTask = new UserLoginTask(email, password);
+            //mAuthTask.execute((Void) null);
+            KryptPadApi.AuthenticateAsync task = new KryptPadApi.AuthenticateAsync(new AsyncTaskComplete() {
+                @Override
+                public void complete(Object data, String error) {
+                    showProgress(false);
+                }
+            });
+
+            task.execute();
         }
     }
     private boolean isEmailValid(String email) {

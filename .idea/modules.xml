@@ -3,7 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/KryptPad.iml" filepath="$PROJECT_DIR$/KryptPad.iml" />
+      <module fileurl="file://$PROJECT_DIR$/KryptPadAndroid.iml" filepath="$PROJECT_DIR$/KryptPadAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kryptpadapi/kryptpadapi.iml" filepath="$PROJECT_DIR$/kryptpadapi/kryptpadapi.iml" />
       <module fileurl="file://$PROJECT_DIR$/kryptpadapi/kryptpadapi.iml" filepath="$PROJECT_DIR$/kryptpadapi/kryptpadapi.iml" />
     </modules>
   </component>
