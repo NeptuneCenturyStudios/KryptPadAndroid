@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 
 import com.google.gson.Gson;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -11,7 +13,6 @@ import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.StringJoiner;
 
 
 /**
@@ -19,8 +20,8 @@ import java.util.StringJoiner;
  */
 public abstract class KryptPadApi {
 
-    //private static final String HOST = "http://test.kryptpad.com/";
-    private static final String HOST = "http://localhost:50821/";
+    private static final String HOST = "http://test.kryptpad.com/";
+    //private static final String HOST = "http://10.0.2.2:50821/";
 
     public static class AuthenticateAsync extends AsyncTask<Void, Void, String> {
         /**
@@ -43,37 +44,65 @@ public abstract class KryptPadApi {
                 conn = (HttpURLConnection) url.openConnection();
 
                 ApiCredentials creds = new ApiCredentials();
-                creds.email = "test@test.com";
+                creds.username = "test@test.com";
                 creds.password = "Abcd!234";
                 creds.grant_type = "password";
-                creds.clientId = "KryptPadAndroid";
+                creds.client_id = "KryptPadAndroid";
 
                 //Gson gson = new Gson();
                 //String data = gson.toJson(creds);
                 String data = formUrlEncodeString(creds);
 
                 // Prepare post
-                conn.setRequestMethod("POST");
                 conn.setDoOutput(true);
+                conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
                 conn.setRequestProperty("Accept", "*/*");
 
                 OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
 
                 // Write the data to the stream
-                writer.write("clientId=KryptPadAndroid&email=test@test.com&grant_type=password&password=Abcd!234");
+                writer.write("client_id=KryptPadAndroid&username=test@test.com&grant_type=password&password=Abcd!234");
                 writer.flush();
 
 
                 InputStream response = conn.getInputStream();
 
-                if (conn.getResponseCode() == 404) {
+                System.out.println(conn.getResponseCode());
 
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                int length = 0;
+                while ((length = response.read(buffer)) != -1) {
+                    baos.write(buffer, 0, length);
                 }
+                System.out.println(baos.toString("UTF-8"));
 
             } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            } finally {
+                try {
+                    InputStream response = conn.getErrorStream();
+                    System.out.println(conn.getResponseCode());
+
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[1024];
+                    int length = 0;
+                    while ((length = response.read(buffer)) != -1) {
+                        baos.write(buffer, 0, length);
+                    }
+
+
+                    System.out.println(baos.toString("UTF-8"));
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (ex != null) {
+                    System.out.println(ex.getMessage());
+
+                }
+            } finally
+
+            {
                 if (conn != null) {
                     conn.disconnect();
                 }
@@ -89,12 +118,13 @@ public abstract class KryptPadApi {
                 _complete.complete(data, null);
             }
         }
+
     }
 
     /**
      * Helper methods
      */
-    public static String formUrlEncodeString(Object obj){
+    public static String formUrlEncodeString(Object obj) {
         ArrayList<String> values = new ArrayList<String>();
 
         for (Field field : obj.getClass().getDeclaredFields()) {
@@ -115,10 +145,10 @@ public abstract class KryptPadApi {
         }
 
         String output = "";
-        for (String s : values){
+        for (String s : values) {
             String delimiter = "&";
-            if (values.indexOf(s) == 0){
-               delimiter  = "";
+            if (values.indexOf(s) == 0) {
+                delimiter = "";
             }
 
             output += delimiter + s;

@@ -5,8 +5,8 @@ package com.neptunecentury.kryptpadapi;
  */
 
 public class ApiCredentials {
-    public String email;
+    public String username;
     public String password;
     public String grant_type;
-    public String clientId;
+    public String client_id;
 }
