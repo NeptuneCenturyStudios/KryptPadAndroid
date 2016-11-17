@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 
 public class HttpResponse {
 
+    private HttpURLConnection _conn = null;
     private InputStream _response = null;
     private int _responseCode;
 
@@ -65,6 +66,9 @@ public class HttpResponse {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // Disconnect
+        _conn.disconnect();
 
         return content;
     }

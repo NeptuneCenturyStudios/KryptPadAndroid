@@ -3,7 +3,7 @@ package com.neptunecentury.kryptpadapi;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by neptu on 11/16/2016.
+ * Represents the token response from oauth
  */
 
 public class TokenResponse {

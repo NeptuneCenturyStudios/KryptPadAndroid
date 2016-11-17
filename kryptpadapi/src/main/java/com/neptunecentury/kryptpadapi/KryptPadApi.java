@@ -9,14 +9,33 @@ import java.util.ArrayList;
 
 
 /**
- * Created by Eric Butler on 11/9/2016.
+ * Provides methods for communicating with the Krypt Pad api.
  */
 public abstract class KryptPadApi {
 
     private static final String HOST = "http://test.kryptpad.com/";
     //private static final String HOST = "http://10.0.2.2:50821/";
 
-    public static class AuthenticateAsync extends AsyncTask<Void, Void, String> {
+    private static TokenResponse _token = null;
+
+    /**
+     * Gets the token response object
+     * @return
+     */
+    public static TokenResponse getTokenResponse() {
+        return _token;
+    }
+
+    /**
+     * Sets the token response object
+     * @param value
+     */
+    private static void setTokenResponse(TokenResponse value) {
+        _token = value;
+    }
+
+
+    public static class AuthenticateAsync extends AsyncTask<Void, Void, Boolean> {
         /**
          * Stores the anonymous class to call when the api method is complete
          */
@@ -31,22 +50,21 @@ public abstract class KryptPadApi {
         }
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected Boolean doInBackground(Void... params) {
 
             try {
 
+                // Create object to send to server
                 ApiCredentials creds = new ApiCredentials();
                 creds.username = _username;
                 creds.password = _password;
                 creds.grant_type = "password";
                 creds.client_id = "KryptPadAndroid";
 
-                //Gson gson = new Gson();
-                //String data = gson.toJson(creds);
+                // Form encode the object
                 String data = formUrlEncodeString(creds);
 
-                // Write the data to the stream
-                //writer.write("client_id=KryptPadAndroid&username=test@test.com&grant_type=password&password=Abcd!234");
+                // Send request to server
                 String response = HttpRequest.post(HOST + "token")
                         .bodyString(data)
                         .execute()
@@ -59,26 +77,20 @@ public abstract class KryptPadApi {
                 Gson gson = new Gson();
                 TokenResponse token = gson.fromJson(response, TokenResponse.class);
 
+                // Set global token object for future requests
+                setTokenResponse(token);
 
-                response = HttpRequest.get(HOST + "api/profiles")
-                        .authorizeBearer(token.access_token)
-                        .execute()
-                        .returnContent()
-                        .asString();
+                return true;
 
-                System.out.println(response);
-
-            } catch (Exception ex) {
-
-            } finally {
+            } catch (Exception e) {
 
             }
 
-            return "1234";
+            return false;
         }
 
         @Override
-        protected void onPostExecute(final String data) {
+        protected void onPostExecute(final Boolean data) {
             // Call the AsyncTaskComplete class we have stored
             if (_complete != null) {
                 _complete.complete(data, null);

@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
+import android.support.annotation.BoolRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -193,6 +194,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 @Override
                 public void complete(Object data, String error) {
                     showProgress(false);
+                    // If we sucessfully signed in, go to the profiles activity. Otherwise, show error.
+                    if ((Boolean)data){
+                        // Go to profiles activity
+                    } else {
+                        // Error
+                        mPasswordView.setError(getString(R.string.error_incorrect_password));
+                        mPasswordView.requestFocus();
+                    }
                 }
             });
 

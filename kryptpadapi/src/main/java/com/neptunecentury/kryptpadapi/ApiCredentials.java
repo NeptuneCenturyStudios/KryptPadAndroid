@@ -1,7 +1,7 @@
 package com.neptunecentury.kryptpadapi;
 
 /**
- * Created by neptu on 11/12/2016.
+ * Represents credentials sent to oauth
  */
 
 public class ApiCredentials {
