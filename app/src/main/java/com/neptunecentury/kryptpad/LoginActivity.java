@@ -3,6 +3,7 @@ package com.neptunecentury.kryptpad;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.BoolRes;
 import android.support.annotation.NonNull;
@@ -197,6 +198,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     // If we sucessfully signed in, go to the profiles activity. Otherwise, show error.
                     if ((Boolean)data){
                         // Go to profiles activity
+                        goToSelectProfileActivity();
                     } else {
                         // Error
                         mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -306,6 +308,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
+    }
+
+    private void goToSelectProfileActivity(){
+        Intent intent = new Intent(this, SelectProfileActivity.class);
+        startActivity(intent);
     }
 
     /**

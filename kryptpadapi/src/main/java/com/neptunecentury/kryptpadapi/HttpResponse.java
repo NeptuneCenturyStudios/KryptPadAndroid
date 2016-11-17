@@ -21,6 +21,7 @@ public class HttpResponse {
      * @param conn
      */
     public HttpResponse(HttpURLConnection conn){
+        _conn = conn;
 
         // Execute the request and get the response
         try {
