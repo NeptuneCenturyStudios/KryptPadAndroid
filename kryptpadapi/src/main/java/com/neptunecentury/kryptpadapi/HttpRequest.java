@@ -2,6 +2,7 @@ package com.neptunecentury.kryptpadapi;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -32,13 +33,32 @@ public class HttpRequest {
 
     /**
      * Configures the HttpRequest to send a post request
-     * @param content
+     * @param url
      * @return
      * @throws IOException
      */
-    public static HttpRequest post(String url, String content) throws IOException {
+    public static HttpRequest post(String url) throws IOException {
         // Create request instance
         HttpRequest request = new HttpRequest(url);
+        // Configure for POST
+        request._conn.setDoOutput(true);
+        request._conn.setRequestMethod("POST");
+
+        // Return the HttpRequest connection
+        return request;
+    }
+
+    /**
+     * Configures the HttpRequest to send a get request
+     * @param url
+     * @return
+     * @throws IOException
+     */
+    public static HttpRequest get(String url) throws IOException {
+        // Create request instance
+        HttpRequest request = new HttpRequest(url);
+        // Configure for GET
+        request._conn.setRequestMethod("GET");
 
         // Return the HttpRequest connection
         return request;
@@ -50,14 +70,30 @@ public class HttpRequest {
      * @return
      * @throws ProtocolException
      */
-    public HttpRequest bodyString(String content) throws ProtocolException {
+    public HttpRequest bodyString(String content) throws IOException {
         // Configure connection to send a post request
-        _conn.setDoOutput(true);
-        _conn.setRequestMethod("POST");
         _conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
         _conn.setRequestProperty("Accept", "*/*");
 
+        OutputStreamWriter writer = new OutputStreamWriter(_conn.getOutputStream());
+
+        // Write the data to the stream
+        writer.write(content);
+        writer.flush();
+
         // Return the HttpRequest connection
+        return this;
+    }
+
+    /**
+     * Adds an authorization header to the request
+     * @param value
+     * @return
+     */
+    public HttpRequest authorizeBearer(String value){
+        // Set the authorization header
+        _conn.setRequestProperty("Authorization", "BEARER " + value);
+
         return this;
     }
 

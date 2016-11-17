@@ -4,14 +4,7 @@ import android.os.AsyncTask;
 
 import com.google.gson.Gson;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 
@@ -28,24 +21,23 @@ public abstract class KryptPadApi {
          * Stores the anonymous class to call when the api method is complete
          */
         private AsyncTaskComplete _complete;
+        private String _username;
+        private String _password;
 
-        public AuthenticateAsync(AsyncTaskComplete complete) {
+        public AuthenticateAsync(String username, String password, AsyncTaskComplete complete) {
             _complete = complete;
+            _username = username;
+            _password = password;
         }
 
         @Override
         protected String doInBackground(Void... params) {
 
-
-            HttpURLConnection conn = null;
-
             try {
-                URL url = new URL(HOST + "token");
-                conn = (HttpURLConnection) url.openConnection();
 
                 ApiCredentials creds = new ApiCredentials();
-                creds.username = "test@test.com";
-                creds.password = "Abcd!234";
+                creds.username = _username;
+                creds.password = _password;
                 creds.grant_type = "password";
                 creds.client_id = "KryptPadAndroid";
 
@@ -53,59 +45,33 @@ public abstract class KryptPadApi {
                 //String data = gson.toJson(creds);
                 String data = formUrlEncodeString(creds);
 
-                // Prepare post
-                conn.setDoOutput(true);
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
-                conn.setRequestProperty("Accept", "*/*");
-
-                OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
-
                 // Write the data to the stream
-                writer.write("client_id=KryptPadAndroid&username=test@test.com&grant_type=password&password=Abcd!234");
-                writer.flush();
+                //writer.write("client_id=KryptPadAndroid&username=test@test.com&grant_type=password&password=Abcd!234");
+                String response = HttpRequest.post(HOST + "token")
+                        .bodyString(data)
+                        .execute()
+                        .returnContent()
+                        .asString();
+
+                System.out.println(response);
+
+                // Parse response
+                Gson gson = new Gson();
+                TokenResponse token = gson.fromJson(response, TokenResponse.class);
 
 
-                InputStream response = conn.getInputStream();
+                response = HttpRequest.get(HOST + "api/profiles")
+                        .authorizeBearer(token.access_token)
+                        .execute()
+                        .returnContent()
+                        .asString();
 
-                System.out.println(conn.getResponseCode());
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                int length = 0;
-                while ((length = response.read(buffer)) != -1) {
-                    baos.write(buffer, 0, length);
-                }
-                System.out.println(baos.toString("UTF-8"));
+                System.out.println(response);
 
             } catch (Exception ex) {
-                try {
-                    InputStream response = conn.getErrorStream();
-                    System.out.println(conn.getResponseCode());
 
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    byte[] buffer = new byte[1024];
-                    int length = 0;
-                    while ((length = response.read(buffer)) != -1) {
-                        baos.write(buffer, 0, length);
-                    }
+            } finally {
 
-
-                    System.out.println(baos.toString("UTF-8"));
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (ex != null) {
-                    System.out.println(ex.getMessage());
-
-                }
-            } finally
-
-            {
-                if (conn != null) {
-                    conn.disconnect();
-                }
             }
 
             return "1234";

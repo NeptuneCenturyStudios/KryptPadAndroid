@@ -189,7 +189,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(true);
             //mAuthTask = new UserLoginTask(email, password);
             //mAuthTask.execute((Void) null);
-            KryptPadApi.AuthenticateAsync task = new KryptPadApi.AuthenticateAsync(new AsyncTaskComplete() {
+            KryptPadApi.AuthenticateAsync task = new KryptPadApi.AuthenticateAsync(email, password, new AsyncTaskComplete() {
                 @Override
                 public void complete(Object data, String error) {
                     showProgress(false);
