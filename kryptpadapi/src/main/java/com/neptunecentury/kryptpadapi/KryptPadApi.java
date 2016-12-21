@@ -34,7 +34,9 @@ public abstract class KryptPadApi {
         _token = value;
     }
 
-
+    /**
+     * Calls the authentication endpoint to verify user credentials
+     */
     public static class AuthenticateAsync extends AsyncTask<Void, Void, Boolean> {
         /**
          * Stores the anonymous class to call when the api method is complete
