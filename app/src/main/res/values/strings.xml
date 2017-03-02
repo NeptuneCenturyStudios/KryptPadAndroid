@@ -13,5 +13,8 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
+    <!-- Strings related to select profile -->
     <string name="title_activity_select_profile">Select Profile</string>
+    <string name="create_profile_menu_item">Create profile</string>
 </resources>
