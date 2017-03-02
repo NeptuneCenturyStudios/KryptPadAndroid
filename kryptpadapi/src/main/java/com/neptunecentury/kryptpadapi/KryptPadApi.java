@@ -20,7 +20,7 @@ public abstract class KryptPadApi {
 
     /**
      * Gets the token response object
-     * @return
+     * @return TokenResponse
      */
     public static TokenResponse getTokenResponse() {
         return _token;
