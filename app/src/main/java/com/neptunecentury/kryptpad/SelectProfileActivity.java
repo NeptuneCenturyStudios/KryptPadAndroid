@@ -7,7 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class SelectProfileActivity extends AppCompatActivity {
 
@@ -34,6 +36,27 @@ public class SelectProfileActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.select_profile_menu, menu);
         return true;
+    }
+
+    /***
+     * Listen to the menu for clicks
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.create_profile:
+                showMsg("You clicked create profile");
+            break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showMsg(String msg) {
+        Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);
+        toast.show();
     }
 
 }
