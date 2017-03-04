@@ -38,9 +38,7 @@ public abstract class KryptPadApi {
      * Calls the authentication endpoint to verify user credentials
      */
     public static class AuthenticateAsync extends AsyncTask<Void, Void, Boolean> {
-        /**
-         * Stores the anonymous class to call when the api method is complete
-         */
+        // Stores the anonymous class that will be called when the async task is complete
         private final AsyncTaskComplete _complete;
         private String _username;
         private String _password;
@@ -104,7 +102,7 @@ public abstract class KryptPadApi {
      * Gets the profiles of an account
      */
     public static class GetProfilesAsync extends  AsyncTask<Void, Void, ApiProfileResult>{
-
+        // Stores the anonymous class that will be called when the async task is complete
         private final AsyncTaskComplete _complete;
 
         public GetProfilesAsync(AsyncTaskComplete complete) {
@@ -117,6 +115,7 @@ public abstract class KryptPadApi {
 
                 // Get the profiles
                 String response = HttpRequest.get(HOST + "/api/profiles")
+                        .authorizeBearer(_token.access_token)
                         .execute()
                         .returnContent()
                         .asString();

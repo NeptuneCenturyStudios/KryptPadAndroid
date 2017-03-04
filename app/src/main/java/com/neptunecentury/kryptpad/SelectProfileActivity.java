@@ -9,7 +9,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import com.neptunecentury.kryptpadapi.ApiProfile;
+import com.neptunecentury.kryptpadapi.ApiProfileResult;
+import com.neptunecentury.kryptpadapi.AsyncTaskComplete;
+import com.neptunecentury.kryptpadapi.KryptPadApi;
+
+import java.util.ArrayList;
 
 public class SelectProfileActivity extends AppCompatActivity {
 
@@ -29,6 +38,32 @@ public class SelectProfileActivity extends AppCompatActivity {
                         .show();
             }
         });
+
+        // Create list adapter to listen to changes in data
+        final ArrayAdapter<ApiProfile> adapter = new ArrayAdapter<ApiProfile>(this, android.R.layout.simple_list_item_1);
+
+        // Set the adapter to our list view
+        ListView profiles = (ListView) findViewById(R.id.profiles);
+        profiles.setAdapter(adapter);
+
+
+        // Get list of profiles
+        KryptPadApi.GetProfilesAsync task = new KryptPadApi.GetProfilesAsync(new AsyncTaskComplete() {
+            @Override
+            public void complete(Object data, String error) {
+                ApiProfileResult profileResult = (ApiProfileResult) data;
+
+                // Create array adapter for our items
+                //ArrayList list = new ArrayList();
+                for (int x = 0; x < profileResult.profiles.length; x++) {
+                    //list.add(profileResult.profiles[x]);
+                    adapter.add(profileResult.profiles[x]);
+                }
+
+            }
+        });
+
+        task.execute();
     }
 
     @Override
@@ -40,6 +75,7 @@ public class SelectProfileActivity extends AppCompatActivity {
 
     /***
      * Listen to the menu for clicks
+     *
      * @param item
      * @return
      */
@@ -49,7 +85,7 @@ public class SelectProfileActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.create_profile:
                 showMsg("You clicked create profile");
-            break;
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
