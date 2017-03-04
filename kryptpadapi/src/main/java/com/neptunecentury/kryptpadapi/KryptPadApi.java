@@ -4,9 +4,9 @@ import android.os.AsyncTask;
 
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-
 
 /**
  * Provides methods for communicating with the Krypt Pad api.
@@ -41,7 +41,7 @@ public abstract class KryptPadApi {
         /**
          * Stores the anonymous class to call when the api method is complete
          */
-        private AsyncTaskComplete _complete;
+        private final AsyncTaskComplete _complete;
         private String _username;
         private String _password;
 
@@ -73,8 +73,6 @@ public abstract class KryptPadApi {
                         .returnContent()
                         .asString();
 
-                System.out.println(response);
-
                 // Parse response
                 Gson gson = new Gson();
                 TokenResponse token = gson.fromJson(response, TokenResponse.class);
@@ -85,7 +83,8 @@ public abstract class KryptPadApi {
                 return true;
 
             } catch (Exception e) {
-
+                e.printStackTrace();
+                // TODO: Handle exceptions
             }
 
             return false;
@@ -99,6 +98,52 @@ public abstract class KryptPadApi {
             }
         }
 
+    }
+
+    /**
+     * Gets the profiles of an account
+     */
+    public static class GetProfilesAsync extends  AsyncTask<Void, Void, ApiProfileResult>{
+
+        private final AsyncTaskComplete _complete;
+
+        public GetProfilesAsync(AsyncTaskComplete complete) {
+            _complete = complete;
+        }
+
+        @Override
+        protected ApiProfileResult doInBackground(Void... params) {
+            try {
+
+                // Get the profiles
+                String response = HttpRequest.get(HOST + "/api/profiles")
+                        .execute()
+                        .returnContent()
+                        .asString();
+
+                // Parse response
+                Gson gson = new Gson();
+                ApiProfileResult result = gson.fromJson(response, ApiProfileResult.class);
+
+                // Return the result we got from the api
+                return result;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                // TODO: Handle exceptions
+
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(final ApiProfileResult data) {
+            // Call the AsyncTaskComplete class we have stored
+            if (_complete != null) {
+                _complete.complete(data, null);
+            }
+        }
     }
 
     /**

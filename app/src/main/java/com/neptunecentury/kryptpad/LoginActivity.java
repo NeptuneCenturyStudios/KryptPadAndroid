@@ -194,7 +194,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             KryptPadApi.AuthenticateAsync task = new KryptPadApi.AuthenticateAsync(email, password, new AsyncTaskComplete() {
                 @Override
                 public void complete(Object data, String error) {
-                    showProgress(false);
+
                     // If we sucessfully signed in, go to the profiles activity. Otherwise, show error.
                     if ((Boolean)data){
                         // Go to profiles activity
@@ -204,6 +204,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         mPasswordView.setError(getString(R.string.error_incorrect_password));
                         mPasswordView.requestFocus();
                     }
+
+                    showProgress(false);
                 }
             });
 
@@ -310,6 +312,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
+    /**
+     * Starts the select profile activity
+     */
     private void goToSelectProfileActivity(){
         Intent intent = new Intent(this, SelectProfileActivity.class);
         startActivity(intent);
